@@ -1,0 +1,29 @@
+// Jeu de données initial pour faire tourner l'appli en local.
+// Une vingtaine de transactions du mois en cours.
+
+function todayMinus(days) {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return d.toISOString();
+}
+
+export const seedTransactions = [
+  { id: 1,  date: todayMinus(28), label: 'Salaire', amount: 2400, type: 'credit', currency: 'EUR', category: 'revenu' },
+  { id: 2,  date: todayMinus(27), label: 'Loyer',   amount: 850,  type: 'debit',  currency: 'EUR', category: 'logement' },
+  { id: 3,  date: todayMinus(25), label: 'Courses Carrefour', amount: 78.40, type: 'debit', currency: 'EUR', category: 'alimentation' },
+  { id: 4,  date: todayMinus(22), label: 'Essence', amount: 65,   type: 'debit',  currency: 'EUR', category: 'transport' },
+  { id: 5,  date: todayMinus(20), label: 'Netflix', amount: 13.49, type: 'debit', currency: 'EUR', category: 'loisirs' },
+  { id: 6,  date: todayMinus(18), label: 'Spotify', amount: 9.99, type: 'debit',  currency: 'EUR', category: 'loisirs' },
+  { id: 7,  date: todayMinus(15), label: 'Restaurant', amount: 45, type: 'debit', currency: 'EUR', category: 'autre' },
+  { id: 8,  date: todayMinus(14), label: 'Remboursement ami', amount: 30, type: 'credit', currency: 'EUR', category: 'autre' },
+  { id: 9,  date: todayMinus(12), label: 'Courses Lidl', amount: 52.10, type: 'debit', currency: 'EUR', category: 'alimentation' },
+  { id: 10, date: todayMinus(10), label: 'Cinema', amount: 12.50, type: 'debit', currency: 'EUR', category: 'loisirs' },
+  { id: 11, date: todayMinus(8),  label: 'Uber', amount: 18, type: 'debit', currency: 'EUR', category: 'transport' },
+  { id: 12, date: todayMinus(7),  label: 'Pharmacie', amount: 23.40, type: 'debit', currency: 'EUR', category: 'autre' },
+  { id: 13, date: todayMinus(6),  label: 'Freelance mission', amount: 600, type: 'credit', currency: 'EUR', category: 'revenu' },
+  { id: 14, date: todayMinus(5),  label: 'Courses Monoprix', amount: 89.20, type: 'debit', currency: 'EUR', category: 'alimentation' },
+  { id: 15, date: todayMinus(4),  label: 'Abonnement gym', amount: 35, type: 'debit', currency: 'EUR', category: 'autre' },
+  { id: 16, date: todayMinus(3),  label: 'Livre Amazon', amount: 14.90, type: 'debit', currency: 'EUR', category: 'autre' },
+  { id: 17, date: todayMinus(2),  label: 'Courses Bio Cest Bon', amount: 41.50, type: 'debit', currency: 'EUR', category: 'alimentation' },
+  { id: 18, date: todayMinus(1),  label: 'Coffee shop', amount: 4.20, type: 'debit', currency: 'EUR', category: 'autre' },
+];
