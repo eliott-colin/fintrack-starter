@@ -30,6 +30,9 @@ describe('divide', () => {
   it('retourne 2 quand on divise 6 par 3', () => {
     expect(divide(6, 3)).toBe(2);
   });
+  it('lève une erreur quand on divise par zéro', () => {
+    expect(() => divide(6, 0)).toThrow('Impossible de diviser par zéro');
+  });
 });
 
 describe('modulo', () => {
