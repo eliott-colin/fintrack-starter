@@ -2,6 +2,9 @@
 
 Application de gestion de budget personnel.
 
+## CI
+[![CI](https://github.com/eliott-colin/fintrack-starter/actions/workflows/ci.yml/badge.svg)](https://github.com/eliott-colin/fintrack-starter/actions/workflows/ci.yml)
+
 ## Stack
 
 - React 18
