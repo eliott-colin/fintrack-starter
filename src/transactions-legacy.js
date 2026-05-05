@@ -132,11 +132,23 @@ export function processTransactions(txs, opts) {
       var lab = tx.label.toLowerCase();
       if (lab.indexOf('loyer') >= 0 || lab.indexOf('rent') >= 0) {
         category = 'logement';
-      } else if (lab.indexOf('course') >= 0 || lab.indexOf('groce') >= 0 || lab.indexOf('super') >= 0) {
+      } else if (
+        lab.indexOf('course') >= 0 ||
+        lab.indexOf('groce') >= 0 ||
+        lab.indexOf('super') >= 0
+      ) {
         category = 'alimentation';
-      } else if (lab.indexOf('essence') >= 0 || lab.indexOf('gas') >= 0 || lab.indexOf('uber') >= 0) {
+      } else if (
+        lab.indexOf('essence') >= 0 ||
+        lab.indexOf('gas') >= 0 ||
+        lab.indexOf('uber') >= 0
+      ) {
         category = 'transport';
-      } else if (lab.indexOf('netflix') >= 0 || lab.indexOf('spotify') >= 0 || lab.indexOf('cinema') >= 0) {
+      } else if (
+        lab.indexOf('netflix') >= 0 ||
+        lab.indexOf('spotify') >= 0 ||
+        lab.indexOf('cinema') >= 0
+      ) {
         category = 'loisirs';
       } else if (lab.indexOf('salaire') >= 0 || lab.indexOf('salary') >= 0) {
         category = 'revenu';
@@ -149,7 +161,9 @@ export function processTransactions(txs, opts) {
 
     // alertes
     if (converted > threshold && tx.type === 'debit') {
-      warnings.push('transaction ' + i + ' depasse le seuil (' + converted + ' > ' + threshold + ')');
+      warnings.push(
+        'transaction ' + i + ' depasse le seuil (' + converted + ' > ' + threshold + ')',
+      );
     }
 
     // calculs
@@ -176,7 +190,7 @@ export function processTransactions(txs, opts) {
     item.currency = opts.currency;
     item.type = tx.type;
     item.category = category;
-    item.flagged = (converted > threshold && tx.type === 'debit');
+    item.flagged = converted > threshold && tx.type === 'debit';
     result.push(item);
   }
 
@@ -211,7 +225,7 @@ export function processTransactions(txs, opts) {
     avgCredit: avgCredit,
     avgDebit: avgDebit,
     errors: errors,
-    warnings: warnings
+    warnings: warnings,
   };
 }
 
