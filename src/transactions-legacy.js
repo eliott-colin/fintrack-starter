@@ -22,12 +22,12 @@ function fmt(d) {
 }
 
 // fonction utilitaire bis (faut-il vraiment deux fonctions de format ?)
-function formatDate2(date) {
-  var d = date.getDate();
-  var m = date.getMonth() + 1;
-  var y = date.getFullYear();
-  return (d < 10 ? '0' + d : d) + '/' + (m < 10 ? '0' + m : m) + '/' + y;
-}
+// function formatDate2(date) {
+//   var d = date.getDate();
+//   var m = date.getMonth() + 1;
+//   var y = date.getFullYear();
+//   return (d < 10 ? '0' + d : d) + '/' + (m < 10 ? '0' + m : m) + '/' + y;
+// }
 
 // THE function
 export function processTransactions(txs, opts) {
@@ -39,7 +39,7 @@ export function processTransactions(txs, opts) {
   var nbDebit = 0;
   var errors = [];
   var warnings = [];
-  var i, j, k;
+  var i, j;
   var tx;
   var rate;
   var converted;
