@@ -54,7 +54,7 @@ export function modulo(a, b) {
  *              comme un coefficient décimal au lieu d'un pourcentage.
  */
 export function simpleInterest(principal, rate, years) {
-  return principal * rate * years;
+  return principal * (rate / 100) * years;
 }
 
 /**

@@ -1,18 +1,22 @@
 {
   "name": "fintrack",
   "private": true,
-  "version": "0.1.0",
   "type": "module",
+  "version": "0.1.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --ext .js,.jsx",
     "format": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "jest"
   },
   "lint-staged": {
-    "*.{js,jsx}": ["eslint --fix", "prettier --write"]
+    "*.{js,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "husky": "^9.1.7",
@@ -20,12 +24,16 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.0",
+    "@babel/preset-env": "^7.29.3",
     "@eslint/js": "^9.39.4",
     "@vitejs/plugin-react": "^4.3.1",
+    "babel-jest": "^30.3.0",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "globals": "^17.6.0",
+    "jest": "^30.3.0",
     "prettier": "^3.8.3",
     "vite": "^5.4.0"
   }
