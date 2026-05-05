@@ -25,7 +25,7 @@ export default defineConfig([
     },
   },
   {
-    files: ['babel.config.js', 'jest.config.js'],
+    files: ['babel.config.cjs', 'jest.config.cjs'],
     languageOptions: {
       sourceType: 'commonjs',
       globals: globals.node,
