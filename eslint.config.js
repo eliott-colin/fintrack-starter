@@ -5,7 +5,25 @@ import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
   {
-    files: ['**/*.{js,mjs,cjs,jsx}'],
+    files: ['**/*.test.{js,jsx}', '**/__tests__/**/*.{js,jsx}'],
+    plugins: { js },
+    extends: ['js/recommended'],
+    languageOptions: {
+      globals: { ...globals.jest, ...globals.node },
+      sourceType: 'commonjs',
+    },
+  },
+  {
+    files: ['babel.config.cjs', 'jest.config.cjs'],
+    plugins: { js },
+    extends: ['js/recommended'],
+    languageOptions: {
+      sourceType: 'commonjs',
+      globals: globals.node,
+    },
+  },
+  {
+    files: ['**/*.{js,mjs,jsx}'],
     plugins: { js },
     extends: ['js/recommended'],
     languageOptions: {
@@ -15,20 +33,6 @@ export default defineConfig([
     },
     rules: {
       'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
-    },
-  },
-  {
-    files: ['**/*.test.{js,jsx}', '**/__tests__/**/*.{js,jsx}'],
-    languageOptions: {
-      globals: globals.jest,
-      sourceType: 'commonjs',
-    },
-  },
-  {
-    files: ['babel.config.cjs', 'jest.config.cjs'],
-    languageOptions: {
-      sourceType: 'commonjs',
-      globals: globals.node,
     },
   },
   {
