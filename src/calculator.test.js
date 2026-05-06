@@ -1,4 +1,4 @@
-const {
+import {
   add,
   subtract,
   multiply,
@@ -9,7 +9,7 @@ const {
   convertCurrency,
   computeBalance,
   formatAmount,
-} = require('./calculator.js');
+} from './calculator.js';
 
 describe('add', () => {
   it('retourne 5 quand on additionne 2 et 3', () => {

@@ -9,8 +9,8 @@ export default defineConfig([
     plugins: { js },
     extends: ['js/recommended'],
     languageOptions: {
-      globals: { ...globals.jest, ...globals.node },
-      sourceType: 'commonjs',
+      globals: globals.jest,
+      sourceType: 'module',
     },
   },
   {

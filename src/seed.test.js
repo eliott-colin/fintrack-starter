@@ -1,4 +1,4 @@
-const { todayMinus } = require('./seed.js');
+import { todayMinus } from './seed.js';
 
 describe('mocks temporels', () => {
   const realDateNow = Date.now;
