@@ -23,3 +23,11 @@ test('reverse null throws an error', () => {
 test('square 5 returns 25', () => {
   expect(square(5)).toBe(25);
 });
+
+test('square non-number throws', () => {
+  expect(() => square('abc')).toThrow('Input must be a number');
+});
+
+test('square NaN throws', () => {
+  expect(() => square(NaN)).toThrow('Input must be a number');
+});
