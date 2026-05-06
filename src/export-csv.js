@@ -10,7 +10,12 @@ function escapeCsv(value) {
   return s;
 }
 
-export function exportTransactionsToCsv(transactions) {
+function getMonthYearFromDate(dateStr) {
+  const date = new Date(dateStr);
+  return { month: date.getMonth(), year: date.getFullYear() };
+}
+
+export function exportTransactionsToCsv(transactions, filterDate = null) {
   const headers = ['date', 'label', 'amount', 'category'];
   const lines = [];
   lines.push(headers.join(','));
@@ -19,7 +24,22 @@ export function exportTransactionsToCsv(transactions) {
     return lines.join('\n') + '\n';
   }
 
+  let targetMonth, targetYear;
+  if (filterDate) {
+    targetMonth = filterDate.getMonth();
+    targetYear = filterDate.getFullYear();
+  } else {
+    const now = new Date();
+    targetMonth = now.getMonth();
+    targetYear = now.getFullYear();
+  }
+
   for (const tx of transactions) {
+    const { month, year } = getMonthYearFromDate(tx.date);
+    if (month !== targetMonth || year !== targetYear) {
+      continue;
+    }
+
     const row = [
       escapeCsv(tx.date),
       escapeCsv(tx.label),
