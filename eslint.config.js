@@ -5,16 +5,21 @@ import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
   {
-    files: ['**/*.test.{js,jsx}', '**/__tests__/**/*.{js,jsx}'],
+    files: [
+      '**/*.test.{js,jsx}',
+      '**/__tests__/**/*.{js,jsx}',
+      'tests/**/*.spec.js',
+      'tests-e2e/**/*.spec.js',
+    ],
     plugins: { js },
     extends: ['js/recommended'],
     languageOptions: {
-      globals: globals.jest,
+      globals: { ...globals.jest, ...globals.browser, test: 'readonly', expect: 'readonly' },
       sourceType: 'module',
     },
   },
   {
-    files: ['babel.config.cjs', 'jest.config.cjs'],
+    files: ['babel.config.cjs', 'jest.config.cjs', 'playwright.config.js'],
     plugins: { js },
     extends: ['js/recommended'],
     languageOptions: {
