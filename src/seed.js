@@ -1,8 +1,8 @@
 // Jeu de données initial pour faire tourner l'appli en local.
 // Une vingtaine de transactions du mois en cours.
 
-function todayMinus(days) {
-  const d = new Date();
+export function todayMinus(days) {
+  const d = new Date(Date.now());
   d.setDate(d.getDate() - days);
   return d.toISOString();
 }

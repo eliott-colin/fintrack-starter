@@ -10,6 +10,14 @@
 // ============================================================================
 
 var TYPES = ['credit', 'debit', 'transfer'];
+var DEFAULT_CURRENCY = 'EUR';
+var DEFAULT_THRESHOLD = 1000;
+var EXCHANGE_RATES = {
+  'USD->EUR': 0.92,
+  'EUR->USD': 1.08,
+  'GBP->EUR': 1.17,
+  'EUR->GBP': 0.85,
+};
 
 // fonction utilitaire (utilisée nulle part ailleurs ?)
 function fmt(d) {
@@ -39,7 +47,6 @@ export function processTransactions(txs, opts) {
   var nbDebit = 0;
   var errors = [];
   var warnings = [];
-  var i, j;
   var tx;
   var rate;
   var converted;
@@ -53,7 +60,7 @@ export function processTransactions(txs, opts) {
     opts = {};
   }
   if (!opts.currency) {
-    opts.currency = 'EUR';
+    opts.currency = DEFAULT_CURRENCY;
   }
   if (!opts.month) {
     opts.month = new Date().getMonth();
@@ -62,7 +69,7 @@ export function processTransactions(txs, opts) {
     opts.year = new Date().getFullYear();
   }
   if (opts.threshold === undefined) {
-    opts.threshold = 1000;
+    opts.threshold = DEFAULT_THRESHOLD;
   }
 
   threshold = opts.threshold;
@@ -70,56 +77,50 @@ export function processTransactions(txs, opts) {
   year = opts.year;
 
   // boucle principale
-  for (i = 0; i < txs.length; i++) {
-    tx = txs[i];
+  for (var transactionIndex = 0; transactionIndex < txs.length; transactionIndex++) {
+    tx = txs[transactionIndex];
 
     // on filtre par mois et par année
-    var d = new Date(tx.date);
-    if (d.getMonth() !== month) {
+    var transactionDate = new Date(tx.date);
+    if (transactionDate.getMonth() !== month) {
       continue;
     }
-    if (d.getFullYear() !== year) {
+    if (transactionDate.getFullYear() !== year) {
       continue;
     }
 
     // on vérifie le type
     var typeOk = false;
-    for (j = 0; j < TYPES.length; j++) {
-      if (TYPES[j] === tx.type) {
+    for (var typeIndex = 0; typeIndex < TYPES.length; typeIndex++) {
+      if (TYPES[typeIndex] === tx.type) {
         typeOk = true;
       }
     }
     if (!typeOk) {
-      errors.push('transaction ' + i + ' has invalid type');
+      errors.push('transaction ' + transactionIndex + ' has invalid type');
       continue;
     }
 
     // on vérifie le montant
     if (tx.amount === undefined || tx.amount === null) {
-      errors.push('transaction ' + i + ' has no amount');
+      errors.push('transaction ' + transactionIndex + ' has no amount');
       continue;
     }
     if (typeof tx.amount !== 'number') {
-      errors.push('transaction ' + i + ' amount is not a number');
+      errors.push('transaction ' + transactionIndex + ' amount is not a number');
       continue;
     }
     if (tx.amount < 0) {
-      errors.push('transaction ' + i + ' has negative amount');
+      errors.push('transaction ' + transactionIndex + ' has negative amount');
       continue;
     }
 
     // conversion devise si besoin
     if (tx.currency && tx.currency !== opts.currency) {
       // taux en dur, à mettre à jour à la main tous les mois...
-      if (tx.currency === 'USD' && opts.currency === 'EUR') {
-        rate = 0.92;
-      } else if (tx.currency === 'EUR' && opts.currency === 'USD') {
-        rate = 1.08;
-      } else if (tx.currency === 'GBP' && opts.currency === 'EUR') {
-        rate = 1.17;
-      } else if (tx.currency === 'EUR' && opts.currency === 'GBP') {
-        rate = 0.85;
-      } else {
+      var key = tx.currency + '->' + opts.currency;
+      rate = EXCHANGE_RATES[key];
+      if (rate === undefined) {
         rate = 1; // fallback
       }
       converted = tx.amount * rate;
@@ -129,16 +130,28 @@ export function processTransactions(txs, opts) {
 
     // catégorisation manuelle (devrait être dans la donnée mais bon...)
     if (tx.label) {
-      var lab = tx.label.toLowerCase();
-      if (lab.indexOf('loyer') >= 0 || lab.indexOf('rent') >= 0) {
+      var labelLower = tx.label.toLowerCase();
+      if (labelLower.indexOf('loyer') >= 0 || labelLower.indexOf('rent') >= 0) {
         category = 'logement';
-      } else if (lab.indexOf('course') >= 0 || lab.indexOf('groce') >= 0 || lab.indexOf('super') >= 0) {
+      } else if (
+        labelLower.indexOf('course') >= 0 ||
+        labelLower.indexOf('groce') >= 0 ||
+        labelLower.indexOf('super') >= 0
+      ) {
         category = 'alimentation';
-      } else if (lab.indexOf('essence') >= 0 || lab.indexOf('gas') >= 0 || lab.indexOf('uber') >= 0) {
+      } else if (
+        labelLower.indexOf('essence') >= 0 ||
+        labelLower.indexOf('gas') >= 0 ||
+        labelLower.indexOf('uber') >= 0
+      ) {
         category = 'transport';
-      } else if (lab.indexOf('netflix') >= 0 || lab.indexOf('spotify') >= 0 || lab.indexOf('cinema') >= 0) {
+      } else if (
+        labelLower.indexOf('netflix') >= 0 ||
+        labelLower.indexOf('spotify') >= 0 ||
+        labelLower.indexOf('cinema') >= 0
+      ) {
         category = 'loisirs';
-      } else if (lab.indexOf('salaire') >= 0 || lab.indexOf('salary') >= 0) {
+      } else if (labelLower.indexOf('salaire') >= 0 || labelLower.indexOf('salary') >= 0) {
         category = 'revenu';
       } else {
         category = 'autre';
@@ -149,7 +162,15 @@ export function processTransactions(txs, opts) {
 
     // alertes
     if (converted > threshold && tx.type === 'debit') {
-      warnings.push('transaction ' + i + ' depasse le seuil (' + converted + ' > ' + threshold + ')');
+      warnings.push(
+        'transaction ' +
+          transactionIndex +
+          ' depasse le seuil (' +
+          converted +
+          ' > ' +
+          threshold +
+          ')',
+      );
     }
 
     // calculs
@@ -168,7 +189,7 @@ export function processTransactions(txs, opts) {
     // construction de l'objet de sortie
     var item = {};
     item.id = tx.id;
-    item.date = fmt(d);
+    item.date = fmt(transactionDate);
     item.label = tx.label || '(sans libellé)';
     item.amount = converted;
     item.originalAmount = tx.amount;
@@ -176,18 +197,18 @@ export function processTransactions(txs, opts) {
     item.currency = opts.currency;
     item.type = tx.type;
     item.category = category;
-    item.flagged = (converted > threshold && tx.type === 'debit');
+    item.flagged = converted > threshold && tx.type === 'debit';
     result.push(item);
   }
 
   // tri par date (un peu pourri mais ça marche)
   result.sort(function (a, b) {
-    var pa = a.date.split('/');
-    var pb = b.date.split('/');
-    var da = new Date(pa[2], pa[1] - 1, pa[0]);
-    var db = new Date(pb[2], pb[1] - 1, pb[0]);
-    if (da < db) return -1;
-    if (da > db) return 1;
+    var dateAparts = a.date.split('/');
+    var dateBparts = b.date.split('/');
+    var dateA = new Date(dateAparts[2], dateAparts[1] - 1, dateAparts[0]);
+    var dateB = new Date(dateBparts[2], dateBparts[1] - 1, dateBparts[0]);
+    if (dateA < dateB) return -1;
+    if (dateA > dateB) return 1;
     return 0;
   });
 
@@ -211,7 +232,7 @@ export function processTransactions(txs, opts) {
     avgCredit: avgCredit,
     avgDebit: avgDebit,
     errors: errors,
-    warnings: warnings
+    warnings: warnings,
   };
 }
 

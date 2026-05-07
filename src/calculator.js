@@ -32,6 +32,11 @@ export function multiply(a, b) {
  * BUG LATENT : ne gère pas la division par zéro (retourne Infinity ou NaN).
  */
 export function divide(a, b) {
+  if (b === 0) {
+    throw new Error('Impossible de diviser par zéro');
+  } else if (typeof a !== 'number' || isNaN(a) || typeof b !== 'number' || isNaN(b)) {
+    throw new Error('Veuillez fournir des nombres valides pour les deux arguments');
+  }
   return a / b;
 }
 
@@ -54,7 +59,7 @@ export function modulo(a, b) {
  *              comme un coefficient décimal au lieu d'un pourcentage.
  */
 export function simpleInterest(principal, rate, years) {
-  return principal * rate * years;
+  return principal * (rate / 100) * years;
 }
 
 /**
