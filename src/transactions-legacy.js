@@ -10,6 +10,14 @@
 // ============================================================================
 
 var TYPES = ['credit', 'debit', 'transfer'];
+var DEFAULT_CURRENCY = 'EUR';
+var DEFAULT_THRESHOLD = 1000;
+var EXCHANGE_RATES = {
+  'USD->EUR': 0.92,
+  'EUR->USD': 1.08,
+  'GBP->EUR': 1.17,
+  'EUR->GBP': 0.85,
+};
 
 // fonction utilitaire (utilisée nulle part ailleurs ?)
 function fmt(d) {
@@ -53,7 +61,7 @@ export function processTransactions(txs, opts) {
     opts = {};
   }
   if (!opts.currency) {
-    opts.currency = 'EUR';
+    opts.currency = DEFAULT_CURRENCY;
   }
   if (!opts.month) {
     opts.month = new Date().getMonth();
@@ -62,7 +70,7 @@ export function processTransactions(txs, opts) {
     opts.year = new Date().getFullYear();
   }
   if (opts.threshold === undefined) {
-    opts.threshold = 1000;
+    opts.threshold = DEFAULT_THRESHOLD;
   }
 
   threshold = opts.threshold;
@@ -111,15 +119,9 @@ export function processTransactions(txs, opts) {
     // conversion devise si besoin
     if (tx.currency && tx.currency !== opts.currency) {
       // taux en dur, à mettre à jour à la main tous les mois...
-      if (tx.currency === 'USD' && opts.currency === 'EUR') {
-        rate = 0.92;
-      } else if (tx.currency === 'EUR' && opts.currency === 'USD') {
-        rate = 1.08;
-      } else if (tx.currency === 'GBP' && opts.currency === 'EUR') {
-        rate = 1.17;
-      } else if (tx.currency === 'EUR' && opts.currency === 'GBP') {
-        rate = 0.85;
-      } else {
+      var key = tx.currency + '->' + opts.currency;
+      rate = EXCHANGE_RATES[key];
+      if (rate === undefined) {
         rate = 1; // fallback
       }
       converted = tx.amount * rate;
