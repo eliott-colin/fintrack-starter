@@ -35,6 +35,34 @@ Le module sert à transformer des transactions brutes en données enrichies avec
 
 ## Code smells identifiés
 
+## Refactoring effectué
+
+### Zone 1: Magic Numbers (Priorité Haute)
+**Refactoring 1 - Extraction des constantes nommées:**
+- Extrait `DEFAULT_CURRENCY = 'EUR'` pour remplacer les `'EUR'` en dur.
+- Extrait `DEFAULT_THRESHOLD = 1000` pour la valeur par défaut du seuil.
+- Créé `EXCHANGE_RATES` objet pour centraliser les taux de change (0.92, 1.08, 1.17, 0.85).
+- Simplifié la conversion de devise : au lieu de cascades de `if-else`, utilise une lookup dans l'objet.
+- Impact: les valeurs sont maintenant modifiables au même endroit, la conversion est plus propre.
+- Tests: tous passent. 22 tests de caractérisation + 9 tests E2E verts.
+
+### Zone 2: Unclear Naming (Priorité Moyenne)
+**Refactoring 2 - Renommage des variables mal nommées:**
+- Renommé `i` → `transactionIndex` dans la boucle principale.
+- Renommé `j` → `typeIndex` dans la boucle de vérification du type.
+- Renommé `d` → `transactionDate` pour la variable de date.
+- Renommé `lab` → `labelLower` pour la version minuscule du libellé.
+- Renommé `pa`, `pb` → `dateAparts`, `dateBparts` dans la fonction de tri.
+- Renommé `da`, `db` → `dateA`, `dateB` pour les dates créées depuis les parts.
+- Impact: le code est maintenant plus lisible et facile à déboguer.
+- Tests: tous passent. 22 tests de caractérisation + 9 tests E2E verts.
+
+### Prochaines zones à refactoriser:
+- Externaliser la catégorisation dans une fonction dédiée (réduire Long Method).
+- Extraire la validation de transactions dans une fonction dédiée.
+- Créer une fonction pour le calcul des agrégations (totaux, moyennes, comptages).
+- Remplacer les boucles manuelles par des fonctions de tableau intégrées (`includes()`, `map()`, etc.).
+
 ### 1. Long Method [Priorité Haute]
 **Localisation :** src/transactions-legacy.js:33-229
 **Constat :** La fonction `processTransactions` fait 197 lignes, bien au-delà du seuil de 30 lignes recommandé.
