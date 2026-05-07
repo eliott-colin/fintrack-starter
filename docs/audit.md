@@ -73,7 +73,7 @@ Le module sert à transformer des transactions brutes en données enrichies avec
 **Localisation :** src/transactions-legacy.js (module entier)
 **Constat :** La fonction centrale fait de la validation, conversion, catégorisation, agrégation et calculs.
 **Impact :** Impossible de tester une partie sans le reste. Impossible de réutiliser une partie en isolation.
-**Proposition :** Créer des modules séparés : one pour la validation, one pour la conversion, one pour la catégorisation, one pour l'agrégation.
+**Proposition :** Créer des modules séparés : un pour la validation, un pour la conversion, un pour la catégorisation, un pour l'agrégation.
 
 ### 3. Magic Number [Priorité Haute]
 **Localisation :** src/transactions-legacy.js:65, 113-124
@@ -91,7 +91,7 @@ Le module sert à transformer des transactions brutes en données enrichies avec
 **Localisation :** src/transactions-legacy.js:52-66, 87-91
 **Constat :** Les vérifications `if (!opts.X)` sont répétées plusieurs fois. La boucle `for (j = 0; j < TYPES.length)` réinvente une recherche que `includes()` ferait en une ligne.
 **Impact :** Gestion des options fragile (le piège du `0`). Code plus verbeux que nécessaire.
-**Proposition :** Utiliser la destructuration avec defaults : `const { currency = 'EUR', month = new Date().getMonth(), ... } = opts ?? {}`. Remplacer la boucle par `TYPES.includes(tx.type)`.
+**Proposition :** Utiliser la destructuration avec valeurs par défaut : `const { currency = 'EUR', month = new Date().getMonth(), ... } = opts ?? {}`. Remplacer la boucle par `TYPES.includes(tx.type)`.
 
 ### 6. Unclear Naming [Priorité Moyenne]
 **Localisation :** src/transactions-legacy.js (multiples)
