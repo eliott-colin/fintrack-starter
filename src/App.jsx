@@ -1,11 +1,25 @@
 import React, { useState, useMemo } from 'react';
 import { computeBalance, formatAmount, simpleInterest } from './calculator.js';
 import { seedTransactions } from './seed.js';
+import exportTransactionsToCsv from './export-csv.js';
 
 export default function App() {
   const [transactions, setTransactions] = useState(seedTransactions);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ label: '', amount: '', type: 'debit', category: 'autre' });
+
+  function handleExportCsv() {
+    const csv = exportTransactionsToCsv(transactions);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'transactions.csv';
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
 
   const balance = useMemo(() => computeBalance(transactions), [transactions]);
   const totalDebit = useMemo(
@@ -71,7 +85,7 @@ export default function App() {
           <button className="btn btn-primary" onClick={() => setShowForm((s) => !s)}>
             {showForm ? 'Annuler' : 'Ajouter une transaction'}
           </button>
-          <button className="btn btn-ghost" disabled title="À implémenter en J2">
+          <button className="btn btn-secondary" onClick={handleExportCsv}>
             Exporter en CSV
           </button>
         </section>

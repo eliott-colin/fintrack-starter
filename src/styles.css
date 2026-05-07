@@ -293,3 +293,7 @@ body {
     text-align: left;
   }
 }
+.btn-secondary {
+  background: var(--teal);
+  color: white;
+}
