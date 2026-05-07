@@ -110,3 +110,33 @@ Le module sert à transformer des transactions brutes en données enrichies avec
 **Constat :** L'argument `opts` est modifié en place. Un appel suivant pourrait voir des valeurs modifiées.
 **Impact :** Surprises et bugs subtils si le même `opts` est réutilisé.
 **Proposition :** Créer une copie ou utiliser la destructuration pour éviter les mutations.
+
+## Éco-impact
+
+### Mesure de référence (avant optimisation)
+- Mode production lancé localement avec `npm run build` puis `npm run preview`.
+- Note environnement: Chrome local non détecté, audit réalisé via Lighthouse CLI avec Chromium Playwright (équivalent moteur).
+- Audit Lighthouse Performance exécuté sur la page d'accueil (`http://127.0.0.1:4173`).
+- Score Lighthouse (départ): **100/100**.
+
+### Recommandations principales remontées par Lighthouse
+- Eliminate render-blocking resources (~150 ms potentiels).
+- Reduce unused JavaScript (~150 ms potentiels).
+- Initial server response time was short (gain potentiel marginal).
+
+### Optimisation choisie (une seule)
+- Option appliquée: **suppression d'une dépendance lourde non utilisée**.
+- Changement effectué: retrait de la dépendance `g` du projet (`npm uninstall g`).
+- Vérification: aucune utilisation détectée dans le code applicatif.
+
+### Résultat après optimisation
+- Audit Lighthouse relancé après rebuild.
+- Nouveau score Lighthouse Performance: **100/100**.
+- Évolution: **0 point** (100 -> 100).
+
+### Conclusion
+- L'application était déjà au maximum sur ce profil Lighthouse.
+- L'optimisation améliore surtout l'hygiène du projet (dépendances) plutôt que le score brut.
+
+### Bonus
+- EcoIndex/GreenIT-Analysis: non réalisé ici (application non déployée publiquement dans ce contexte local).
