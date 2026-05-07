@@ -13,4 +13,4 @@ jobs:
       - run: npm run lint
       - run: npm test --if-present
       - run: npx playwright install --with-deps
-      - run: npx playwright test tests-e2e
+      - run: npx playwright test tests-e2
