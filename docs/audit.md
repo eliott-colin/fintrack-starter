@@ -32,3 +32,53 @@ Le module sert à transformer des transactions brutes en données enrichies avec
 - Zone du code: fonction principale `processTransactions` dans son ensemble.
 	Problème observé: elle mélange validation, conversion, règles métier et calculs.
 	Impact potentiel: les corrections deviennent plus risquées et les tests plus difficiles à isoler.
+
+## Code smells identifiés
+
+### 1. Long Method [Priorité Haute]
+**Localisation :** src/transactions-legacy.js:33-229
+**Constat :** La fonction `processTransactions` fait 197 lignes, bien au-delà du seuil de 30 lignes recommandé.
+**Impact :** Difficile à lire, à tester et à maintenir. Un changement au milieu risque d'affecter plusieurs responsabilités.
+**Proposition :** Découper en plusieurs fonctions : `validateTransaction()`, `convertCurrency()`, `categorizeTransaction()`, `computeAggregates()`.
+
+### 2. God Object [Priorité Haute]
+**Localisation :** src/transactions-legacy.js (module entier)
+**Constat :** La fonction centrale fait de la validation, conversion, catégorisation, agrégation et calculs.
+**Impact :** Impossible de tester une partie sans le reste. Impossible de réutiliser une partie en isolation.
+**Proposition :** Créer des modules séparés : one pour la validation, one pour la conversion, one pour la catégorisation, one pour l'agrégation.
+
+### 3. Magic Number [Priorité Haute]
+**Localisation :** src/transactions-legacy.js:65, 113-124
+**Constat :** Le seuil par défaut 1000 et les taux de change (0.92, 1.08, 1.17, 0.85) sont codés en dur.
+**Impact :** Les valeurs ne peuvent pas être ajustées sans modifier le code source. Aucun contexte pour expliquer ces nombres.
+**Proposition :** Extraire en constantes nommées au début du module ou dans un fichier de configuration externe.
+
+### 4. Dead Code [Priorité Moyenne]
+**Localisation :** src/transactions-legacy.js:25-30, 233-237
+**Constat :** La fonction `formatDate2` est commentée (dead code). La fonction `legacyHelper` est exportée mais probablement inutilisée.
+**Impact :** Augmente la taille du fichier et crée de la confusion. Personne ne sait pourquoi c'est là.
+**Proposition :** Supprimer `formatDate2`. Vérifier que `legacyHelper` est vraiment inutilisée et la supprimer ou en expliquer l'utilité.
+
+### 5. Duplicate Code [Priorité Moyenne]
+**Localisation :** src/transactions-legacy.js:52-66, 87-91
+**Constat :** Les vérifications `if (!opts.X)` sont répétées plusieurs fois. La boucle `for (j = 0; j < TYPES.length)` réinvente une recherche que `includes()` ferait en une ligne.
+**Impact :** Gestion des options fragile (le piège du `0`). Code plus verbeux que nécessaire.
+**Proposition :** Utiliser la destructuration avec defaults : `const { currency = 'EUR', month = new Date().getMonth(), ... } = opts ?? {}`. Remplacer la boucle par `TYPES.includes(tx.type)`.
+
+### 6. Unclear Naming [Priorité Moyenne]
+**Localisation :** src/transactions-legacy.js (multiples)
+**Constat :** Variables nommées `i`, `j`, `d`, `tx`, `tmp`, `pa`, `pb`, `da`, `db` ne donnent pas de contexte sur ce qu'elles représentent.
+**Impact :** Code difficile à suivre sans relire la logique à chaque fois. Augmente les erreurs potentielles.
+**Proposition :** Utiliser des noms explicites : `transactionIndex`, `typeIndex`, `transactionDate`, `partA`, `partB`, `dateA`, `dateB`, etc.
+
+### 7. Complex Conditional [Priorité Moyenne]
+**Localisation :** src/transactions-legacy.js:131-160
+**Constat :** La catégorisation repose sur une cascade de `indexOf()` qui est longue et répétitive. Chercher dans des chaînes est peu fiable.
+**Impact :** Heuristique approximative, pas d'extensibilité sans ajouter plus de conditions.
+**Proposition :** Utiliser un tableau de patterns : `{ keywords: ['loyer', 'rent'], category: 'logement' }` et boucler dessus.
+
+### 8. Mutating Arguments [Priorité Basse]
+**Localisation :** src/transactions-legacy.js:52-66
+**Constat :** L'argument `opts` est modifié en place. Un appel suivant pourrait voir des valeurs modifiées.
+**Impact :** Surprises et bugs subtils si le même `opts` est réutilisé.
+**Proposition :** Créer une copie ou utiliser la destructuration pour éviter les mutations.
